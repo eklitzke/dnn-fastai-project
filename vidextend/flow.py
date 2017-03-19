@@ -157,4 +157,4 @@ class BasketballImageDataGenerator(keras.preprocessing.image.ImageDataGenerator)
             end_num=end_num)
 
         # TODO: cache this
-        yield hstack_images(images)
+        return np.array(hstack_images(images))
