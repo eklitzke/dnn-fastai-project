@@ -3,7 +3,6 @@ import re
 
 import numpy as np
 from PIL import Image
-import keras.preprocessing.image
 
 NUM_RE = re.compile(r'(\d+)')
 
@@ -31,7 +30,6 @@ def hstack_images(input_filenames):
         x_offset += im.size[0]
 
     return new_im
-    #new_im.save(output_filename)
 
 
 def should_include_image(path, start_num, end_num):
