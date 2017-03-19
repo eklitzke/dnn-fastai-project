@@ -20,7 +20,7 @@ datadir = '/usr/share/vid/content/content/'
 
 
 def get_flows(ddir, x, y):
-    return flow_from_directory(datadir, x[0], x[1], y[1])
+    return flow_from_directory(datadir, x[0], x[1], y[1], target_size=(224,224))
 
 
 def conv_block(x, filters, size, stride=(2, 2), mode='same'):
