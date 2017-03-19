@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# from scipy.optimize import fmin_l_bfgs_b
-# from scipy.misc import imsave
-# from keras import metrics
 from vgg16_avg import VGG16_Avg
 import numpy as np
 from keras.layers import Convolution2D, Activation, merge, Deconvolution2D, \
@@ -11,7 +8,8 @@ from keras.layers.normalization import BatchNormalization
 from keras.applications.vgg16 import VGG16
 from keras.models import Model
 import keras.backend as K
-from vidextend.flow import BasketballImageDataGenerator
+# import vidextend.flow.BasketballImageDataGenerator as big
+from vidextend.flow import BasketballImageDataGenerator as big
 
 
 img_shape = (224, 224)
@@ -19,11 +17,18 @@ start_img = 10
 num_in_images = 20
 num_out_images = 3
 batch_size = 1
-datadir = '/usr/share/vid/content/content'
+datadir = '/usr/share/vid/content/content/'
 
 
 def get_flows(ddir, x, y):
-    return None, None
+    b = big()
+    fx = b.flow_from_directory(directory=datadir + "/1/", batch_size=batch_size,
+                               target_size=img_shape,
+                               start_num=x[0], end_num=x[1])
+    fy = b.flow_from_directory(directory=datadir + "/1/", batch_size=batch_size,
+                               target_size=img_shape,
+                               start_num=y[0], end_num=y[1])
+    return fx, fy
 
 
 def conv_block(x, filters, size, stride=(2, 2), mode='same'):
