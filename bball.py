@@ -68,9 +68,9 @@ def main():
     x = conv_block(inp, 64, 9, (1, 1))
     for i in range(4):
         x = res_block(x)
-    x = deconv_block(x, 64, 3, (144, 144, 64))
-    x = deconv_block(x, 64, 3, (288, 288, 64))
-    x = Convolution2D(3, 9, 9, activation='tanh', border_mode='same')(x)
+    x = deconv_block(x, 64, 3, (dest_tensor_shape[0], dest_tensor_shape[1], 64))
+    x = deconv_block(x, 64, 3, (dest_tensor_shape[0] * 2, dest_tensor_shape[1] * 2, 64))
+    x = Convolution2D(3, 9, 9, activation='tanh', border_mode='same', subsample=(2,2))(x)
     outp = Lambda(lambda x: (x+1)*127.5)(x)
 
     vgg_l = Lambda(preproc)
