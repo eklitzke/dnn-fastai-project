@@ -18,7 +18,7 @@ num_in_images = 20
 num_out_images = 3
 batch_size = 1
 datadir = '/usr/share/vid/content/content/'
-#datadir = '/home/ubuntu/courses/deeplearning2/data/bbal'
+datadir = '/home/ubuntu/courses/deeplearning2/data/bbal'
 
 
 def get_flows(ddir, x, y):
@@ -60,8 +60,8 @@ def preproc(x):
 def main():
     # Some preamble
 
-    source_tensor_shape = (img_shape[0] * num_in_images, img_shape[1], 3)
-    dest_tensor_shape = (img_shape[0] * num_out_images, img_shape[1], 3)
+    source_tensor_shape = (img_shape[0], num_in_images * img_shape[1], 3)
+    dest_tensor_shape = (img_shape[0], num_out_images * img_shape[1], 3)
 
     xflow, yflow = get_flows(datadir, (start_img, start_img + num_in_images),
                                       (start_img + num_in_images + 1,
