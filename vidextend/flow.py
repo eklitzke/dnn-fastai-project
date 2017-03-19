@@ -1,6 +1,7 @@
 import os.path
 import re
 
+from PIL import Image
 import keras.preprocessing.image
 
 NUM_RE = re.compile(r'(\d+)')
@@ -9,6 +10,26 @@ maxint = 999999
 
 
 WHITE_LIST_FORMATS = {'png', 'jpg', 'jpeg', 'bmp'}
+
+
+def hstack_images(input_filenames, output_filename):
+    """
+    Horizontally stack all images from @input_filenames in order and write to @output_filename
+    """
+    images = map(Image.open, input_filenames)
+    widths, heights = zip(*(i.size for i in images))
+
+    total_width = sum(widths)
+    max_height = max(heights)
+
+    new_im = Image.new('RGB', (total_width, max_height))
+
+    x_offset = 0
+    for im in images:
+        new_im.paste(im, (x_offset, 0))
+        x_offset += im.size[0]
+
+    new_im.save(output_filename)
 
 
 def should_include_image(path, start_num, end_num):

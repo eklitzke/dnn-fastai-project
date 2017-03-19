@@ -7,6 +7,7 @@ setup(name='dnn-fastai-project',
       install_requires=[
           'keras',
           'numpy',
+          'pillow',
       ],
       entry_points={
           'console_scripts': [
