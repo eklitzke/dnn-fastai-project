@@ -20,7 +20,7 @@ datadir = '/usr/share/vid/content/content/'
 
 
 def get_flows(ddir, x, y):
-    return flow_from_directory(datadir, x[0], x[1], y[1], target_size=(224, 224))
+    return flow_from_directory(datadir, x[0], x[1], y[1], target_size=img_shape)
 
 
 def conv_block(x, filters, size, stride=(2, 2), mode='same'):
@@ -54,9 +54,9 @@ def main():
     source_tensor_shape = (img_shape[0], num_in_images * img_shape[1], 3)
     dest_tensor_shape = (img_shape[0], num_out_images * img_shape[1], 3)
 
-    xyflow = get_flows(datadir, (start_img, start_img + num_in_images),
-                                (start_img + num_in_images + 1,
-                                 start_img + num_in_images + num_out_images))
+    xyflow = get_flows(datadir, (start_img, start_img + num_in_images - 1),
+                                (start_img + num_in_images,
+                                 start_img + num_in_images + num_out_images - 1))
 
     inp = Input(source_tensor_shape)
     x = conv_block(inp, 64, 9, (1, 1))
