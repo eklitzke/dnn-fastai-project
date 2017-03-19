@@ -12,7 +12,7 @@ maxint = 999999
 WHITE_LIST_FORMATS = {'png', 'jpg', 'jpeg', 'bmp'}
 
 
-def hstack_images(input_filenames, output_filename):
+def hstack_images(input_filenames):
     """
     Horizontally stack all images from @input_filenames in order and write to @output_filename
     """
@@ -156,5 +156,5 @@ class BasketballImageDataGenerator(keras.preprocessing.image.ImageDataGenerator)
             start_num=start_num,
             end_num=end_num)
 
-        output_target = os.path.join(directory, f'flow_{start_num}_{end_num}.{save_format}')
-        yield hstack_images(images, output_target)
+        # TODO: cache this
+        yield hstack_images(images)
