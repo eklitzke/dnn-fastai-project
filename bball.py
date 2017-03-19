@@ -20,7 +20,7 @@ datadir = '/usr/share/vid/content/content/'
 
 
 def get_flows(ddir, x, y):
-    return flow_from_directory(datadir, x[0], x[1], y[1], target_size=(224,224))
+    return flow_from_directory(datadir, x[0], x[1], y[1], target_size=(224, 224))
 
 
 def conv_block(x, filters, size, stride=(2, 2), mode='same'):
@@ -86,7 +86,8 @@ def main():
     m_final.compile('adam', 'mse')
 
     for (x, y) in xyflow:
-        m_final.fit([x, y], targ, 1, 2)
+        m_final.fit([x.reshape((1, ) + x.shape),
+                     y.reshape((1, ) + y.shape)], targ, 1, 2)
 
     if False:
         # K.set_value(m_final.optimizer.lr, 1e-4)
