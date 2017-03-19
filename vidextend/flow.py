@@ -1,10 +1,11 @@
 import os.path
 import re
-import sys
 
 import keras.preprocessing.image
 
 NUM_RE = re.compile(r'(\d+)')
+
+maxint = 999999
 
 
 WHITE_LIST_FORMATS = {'png', 'jpg', 'jpeg', 'bmp'}
@@ -26,7 +27,7 @@ def should_include_image(path, start_num, end_num):
     return False
 
 
-class BasketballDirectoryIterator(keras.processing.image.DirectoryIterator):
+class BasketballDirectoryIterator(keras.preprocessing.image.DirectoryIterator):
     """hack"""
 
     def __init__(self, directory, image_data_generator,
@@ -37,7 +38,7 @@ class BasketballDirectoryIterator(keras.processing.image.DirectoryIterator):
                  save_to_dir=None, save_prefix='', save_format='jpeg',
                  follow_links=False,
                  start_num=0,
-                 end_num=sys.maxint):
+                 end_num=maxint):
         if data_format is None:
             data_format = K.image_data_format()
         self.directory = directory
@@ -119,7 +120,7 @@ class BasketballImageDataGenerator(keras.preprocessing.image.ImageDataGenerator)
                             save_format='jpeg',
                             follow_links=False,
                             start_num=0,
-                            end_num=sys.maxint):
+                            end_num=maxint):
         return BasketballDirectoryIterator(
             directory, self,
             target_size=target_size, color_mode=color_mode,
