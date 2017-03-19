@@ -18,6 +18,7 @@ num_in_images = 20
 num_out_images = 3
 batch_size = 1
 datadir = '/usr/share/vid/content/content/'
+#datadir = '/home/ubuntu/courses/deeplearning2/data/bbal'
 
 
 def get_flows(ddir, x, y):
@@ -96,6 +97,8 @@ def main():
 
     m_final.compile('adam', 'mse')
 
+    xflow = np.stack(xflow)
+    yflow = np.stack(yflow)
     m_final.fit([xflow, yflow], targ, 8, 2)
     K.set_value(m_final.optimizer.lr, 1e-4)
     m_final.fit([xflow, yflow], targ, 16, 2)
