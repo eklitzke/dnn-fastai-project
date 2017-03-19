@@ -29,7 +29,8 @@ def hstack_images(input_filenames, output_filename):
         new_im.paste(im, (x_offset, 0))
         x_offset += im.size[0]
 
-    new_im.save(output_filename)
+    return new_im
+    #new_im.save(output_filename)
 
 
 def should_include_image(path, start_num, end_num):
@@ -142,7 +143,7 @@ class BasketballImageDataGenerator(keras.preprocessing.image.ImageDataGenerator)
                             follow_links=False,
                             start_num=0,
                             end_num=maxint):
-        return BasketballDirectoryIterator(
+        images = BasketballDirectoryIterator(
             directory, self,
             target_size=target_size, color_mode=color_mode,
             classes=classes, class_mode=class_mode,
@@ -154,3 +155,6 @@ class BasketballImageDataGenerator(keras.preprocessing.image.ImageDataGenerator)
             follow_links=follow_links,
             start_num=start_num,
             end_num=end_num)
+
+        output_target = os.path.join(directory, f'flow_{start_num}_{end_num}.{save_format}')
+        yield hstack_images(images, output_target)
