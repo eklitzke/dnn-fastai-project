@@ -2,7 +2,7 @@
 
 import numpy as np
 from keras.layers import Convolution2D, Activation, merge, Deconvolution2D, \
-        Input, Lambda
+        Input, Lambda, AveragePooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.applications.vgg16 import VGG16
 from keras.models import Model
@@ -48,19 +48,27 @@ def preproc(x):
     return (x - rn_mean)[:, :, :, ::-1]
 
 
-def get_network():
+def get_network(num_in, num_out):
     # Some preamble
 
-    source_tensor_shape = (img_shape[0], num_in_images * img_shape[1], 3)
-    dest_tensor_shape = (img_shape[0], num_out_images * img_shape[1], 3)
+    source_tensor_shape = (img_shape[0], num_in*img_shape[1], 3)
+    dest_tensor_shape = (img_shape[0], num_out*img_shape[1], 3)
 
     inp = Input(source_tensor_shape)
-    x = conv_block(inp, 64, 9, (1, 1))
+
+    x = conv_block(inp, 64, 16, (1, 1))
+    x = AveragePooling2D((4, 4))(x)
+
+    x = conv_block(x, 64, 9, (1, 1))
+    x = AveragePooling2D((4, 4))(x)
+
     for i in range(4):
         x = res_block(x)
-    x = deconv_block(x, 64, 3, (dest_tensor_shape[0] * 2, dest_tensor_shape[1] * 2, 64))
+    x = deconv_block(x, 64, 3, (dest_tensor_shape[0] // 8, dest_tensor_shape[1] // 8, 64))
+    x = deconv_block(x, 64, 3, (dest_tensor_shape[0] // 4, dest_tensor_shape[1] // 4, 64))
+    x = deconv_block(x, 64, 3, (dest_tensor_shape[0], dest_tensor_shape[1], 64), stride=(4, 4))
     # x = deconv_block(x, 64, 3, (dest_tensor_shape[0] * 2 * 2, dest_tensor_shape[1] * 2 * 2, 64))
-    x = Convolution2D(3, 9, 9, activation='tanh', border_mode='same', subsample=(2, 2))(x)
+    x = Convolution2D(3, 9, 9, activation='tanh', border_mode='same', subsample=(1, 1))(x)
     outp = Lambda(lambda x: (x+1)*127.5)(x)
 
     M = Model(inp, outp)
@@ -91,7 +99,7 @@ def main():
                                 (start_img + num_in_images,
                                  start_img + num_in_images + num_out_images - 1))
 
-    m, inp, outp = get_network()
+    m, inp, outp = get_network(num_in_images, num_out_images)
     targ = np.zeros((batch_size, 128))
 
     for (x, y) in xyflow:
