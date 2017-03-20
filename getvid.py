@@ -23,6 +23,7 @@ def get_vid(video, offset, duration):
     except Exception as e:
         pass
 
+
 def do_thing(t):
     line, rec = t
     line += 1
@@ -43,12 +44,13 @@ def do_thing(t):
 
     os.chdir("..")
 
+
 def main():
     with open(sys.argv[1]) as f:
             r = csv.reader(f)
             with ProcessPoolExecutor(16) as exec:
-                fs = exec.map(do_thing, enumerate(r))
-                
+                exec.map(do_thing, enumerate(r))
+
 
 if __name__ == '__main__':
     main()
