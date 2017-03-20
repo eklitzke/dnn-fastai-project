@@ -48,15 +48,11 @@ def preproc(x):
     return (x - rn_mean)[:, :, :, ::-1]
 
 
-def main():
+def get_network():
     # Some preamble
 
     source_tensor_shape = (img_shape[0], num_in_images * img_shape[1], 3)
     dest_tensor_shape = (img_shape[0], num_out_images * img_shape[1], 3)
-
-    xyflow = get_flows(datadir, (start_img, start_img + num_in_images - 1),
-                                (start_img + num_in_images,
-                                 start_img + num_in_images + num_out_images - 1))
 
     inp = Input(source_tensor_shape)
     x = conv_block(inp, 64, 9, (1, 1))
@@ -84,20 +80,30 @@ def main():
 
     loss = Lambda(lambda x: K.sqrt(K.mean((x[0]-x[1])**2, (1, 2))))([vgg1, vgg2])
     m_final = Model([inp, vgg_inp], loss)
-    targ = np.zeros((batch_size, 128))
 
     m_final.compile('adam', 'mse')
 
+    return m_final, inp, outp
+
+
+def main():
+    xyflow = get_flows(datadir, (start_img, start_img + num_in_images - 1),
+                                (start_img + num_in_images,
+                                 start_img + num_in_images + num_out_images - 1))
+
+    m, inp, outp = get_network()
+    targ = np.zeros((batch_size, 128))
+
     for (x, y) in xyflow:
-        m_final.fit([x.reshape((1, ) + x.shape),
-                     y.reshape((1, ) + y.shape)], targ, 1, 2)
+        m.fit([x.reshape((1, ) + x.shape),
+               y.reshape((1, ) + y.shape)], targ, 1, 20)
 
     if False:
         # K.set_value(m_final.optimizer.lr, 1e-4)
         # m_final.fit([xflow, yflow], targ, 16, 2)
 
         print("saving weights ...")
-        m_final.save_weights('m_final_full.h5')
+        m.save_weights('m_final_full.h5')
         top_model = Model(inp, outp)
         top_model.save_weights('top_final.h5')
     print("Done")
