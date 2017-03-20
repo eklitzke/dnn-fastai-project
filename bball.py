@@ -12,8 +12,8 @@ from vidextend.flow import flow_from_directory
 
 img_shape = (224, 224)
 start_img = 10
-num_in_images = 20
-num_out_images = 3
+num_in_images = 10
+num_out_images = 10
 batch_size = 1
 datadir = '/usr/share/vid/content/content/'
 # datadir = '/home/ubuntu/courses/deeplearning2/data/bbal'
@@ -62,10 +62,13 @@ def main():
     x = conv_block(inp, 64, 9, (1, 1))
     for i in range(4):
         x = res_block(x)
-    x = deconv_block(x, 64, 3, (dest_tensor_shape[0], dest_tensor_shape[1], 64))
     x = deconv_block(x, 64, 3, (dest_tensor_shape[0] * 2, dest_tensor_shape[1] * 2, 64))
+    # x = deconv_block(x, 64, 3, (dest_tensor_shape[0] * 2 * 2, dest_tensor_shape[1] * 2 * 2, 64))
     x = Convolution2D(3, 9, 9, activation='tanh', border_mode='same', subsample=(2, 2))(x)
     outp = Lambda(lambda x: (x+1)*127.5)(x)
+
+    M = Model(inp, outp)
+    M.summary()
 
     vgg_l = Lambda(preproc)
     outp_l = vgg_l(outp)

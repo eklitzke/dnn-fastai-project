@@ -62,6 +62,9 @@ def flow_from_directory(directory, a, b, c, target_size=(224, 224)):
                     ys.append(os.path.join(dirpath, fname))
             xs.sort()
             ys.sort()
+            if not xs or not ys:
+                continue
+
             x_imgs = np.asarray(hstack_images(xs, target_size=target_size))
             y_imgs = np.asarray(hstack_images(ys, target_size=target_size))
             yield (x_imgs, y_imgs)
